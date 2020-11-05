@@ -9,11 +9,11 @@ import com.team30.game.screen.MainMenu;
 
 public class GameContainer extends Game {
 	// TODO Get rid of this
-	static final float SCREEN_WIDTH = 640;
-	static final float SCREEN_HEIGHT = 480;
+	public static final float SCREEN_WIDTH = 640;
+	public static final float SCREEN_HEIGHT = 480;
 	public BitmapFont font;
-	SpriteBatch batch;
-	Texture img;
+	public SpriteBatch batch;
+	public Texture img;
 
 	@Override
 	public void create() {
