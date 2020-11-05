@@ -1,8 +1,9 @@
-package com.team30.game;
+package com.team30.game.screen;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.graphics.GL20;
+import com.team30.game.GameContainer;
 
 public class Settings extends ScreenAdapter {
     private final GameContainer game;
