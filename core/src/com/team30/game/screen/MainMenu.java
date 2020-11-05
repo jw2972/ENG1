@@ -1,4 +1,4 @@
-package com.team30.game;
+package com.team30.game.screen;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.ScreenAdapter;
@@ -9,6 +9,7 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
+import com.team30.game.GameContainer;
 
 import static com.team30.game.GameContainer.SCREEN_HEIGHT;
 import static com.team30.game.GameContainer.SCREEN_WIDTH;
