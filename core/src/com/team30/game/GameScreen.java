@@ -102,7 +102,7 @@ public class GameScreen extends ScreenAdapter implements InputProcessor {
         }
         if (Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
             if (room.getCell((int) auber.position.x + 1, (int) auber.position.y) != null) {
-                auber.position.x += 0.5;
+                auber.position.x += 1;
             }
         }
         if (Gdx.input.isKeyPressed(Input.Keys.DOWN)) {
