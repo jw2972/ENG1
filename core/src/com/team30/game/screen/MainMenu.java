@@ -16,6 +16,9 @@ import static com.team30.game.GameContainer.SCREEN_WIDTH;
 
 public class MainMenu extends ScreenAdapter {
     private final GameContainer game;
+    /**
+     * The input handler for the buttons
+     */
     private final Stage stage;
     OrthographicCamera camera;
 
@@ -71,6 +74,9 @@ public class MainMenu extends ScreenAdapter {
     public void render(float delta) {
         Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+        game.batch.begin();
+        game.batch.draw(game.teamLogoImg, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
+        game.batch.end();
         stage.draw();
     }
 

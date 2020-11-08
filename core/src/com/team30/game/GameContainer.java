@@ -7,17 +7,18 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.team30.game.screen.MainMenu;
 
 public class GameContainer extends Game {
-	static final float SCREEN_WIDTH = 800;
-	static final float SCREEN_HEIGHT = 480;
+	// TODO Get rid of this
+	public static final float SCREEN_WIDTH = 640;
+	public static final float SCREEN_HEIGHT = 480;
 	public BitmapFont font;
-	SpriteBatch batch;
-	Texture img;
+	public SpriteBatch batch;
+	public Texture teamLogoImg;
 
 	@Override
 	public void create() {
 		batch = new SpriteBatch();
 		font = new BitmapFont();
-		img = new Texture("No.png");
+		teamLogoImg = new Texture("No.png");
 		this.setScreen(new MainMenu(this));
 	}
 
@@ -29,6 +30,6 @@ public class GameContainer extends Game {
 	@Override
 	public void dispose() {
 		batch.dispose();
-		img.dispose();
+		teamLogoImg.dispose();
 	}
 }
