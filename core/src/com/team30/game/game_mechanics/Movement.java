@@ -5,6 +5,8 @@ import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.math.Vector2;
 
+import java.util.Random;
+
 /**
  * Handles updating position and collision detection
  */
@@ -48,6 +50,23 @@ public class Movement {
 
     }
 
+    /**
+     * Moves the current entity to a random valid room cell
+     *
+     * @param room The map of valid cells
+     */
+    public void moveRandomCell(TiledMapTileLayer room) {
+        Random rand = new Random();
+        int x = rand.nextInt(room.getWidth());
+        int y = rand.nextInt(room.getHeight());
+        while (room.getCell(x, y) == null) {
+            x = rand.nextInt(room.getWidth());
+            y = rand.nextInt(room.getHeight());
+        }
+        this.position.x = x;
+        this.position.y = y;
+    }
+
     public void draw(Batch batch) {
         batch.draw(texture, getXPosition(), getYPosition(), width, height);
     }
@@ -58,7 +77,7 @@ public class Movement {
      * @param deltaTime The time since last update
      * @param room      The room layer for collision detection
      */
-    public void updateAuber(float deltaTime, TiledMapTileLayer room) {
+    public void updatePosition(float deltaTime, TiledMapTileLayer room) {
         if (deltaTime == 0) return;
 
         if (deltaTime > 0.1f) {

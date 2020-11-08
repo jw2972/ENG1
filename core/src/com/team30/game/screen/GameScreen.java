@@ -14,6 +14,7 @@ import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.team30.game.GameContainer;
 import com.team30.game.game_mechanics.Auber;
+import com.team30.game.game_mechanics.NPCContainer;
 
 public class GameScreen extends ScreenAdapter implements InputProcessor {
     /**
@@ -34,7 +35,7 @@ public class GameScreen extends ScreenAdapter implements InputProcessor {
     OrthogonalTiledMapRenderer tiledMapRenderer;
     TiledMap tiledMap;
     GameContainer game;
-
+    NPCContainer npcs;
     GameScreen(GameContainer game) {
         this.game = game;
         float width = GameContainer.SCREEN_WIDTH;
@@ -54,6 +55,7 @@ public class GameScreen extends ScreenAdapter implements InputProcessor {
 
         // Create and move Auber to centre room
         auber = new Auber(31, 32);
+        npcs = new NPCContainer(room);
         Gdx.input.setInputProcessor(this);
     }
 
@@ -63,7 +65,7 @@ public class GameScreen extends ScreenAdapter implements InputProcessor {
         Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
-        auber.updateAuber(delta, room);
+        auber.updatePosition(delta, room);
         // Set the camera to focus on Auber
         camera.position.x = auber.getXPosition();
         camera.position.y = auber.getYPosition();
@@ -75,6 +77,7 @@ public class GameScreen extends ScreenAdapter implements InputProcessor {
         Batch batch = tiledMapRenderer.getBatch();
         batch.begin();
         auber.draw(batch);
+        npcs.update(delta, room, batch);
         batch.end();
 
     }
