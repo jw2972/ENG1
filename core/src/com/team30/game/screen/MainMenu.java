@@ -75,7 +75,7 @@ public class MainMenu extends ScreenAdapter {
         Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         game.batch.begin();
-        game.batch.draw(game.img, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
+        game.batch.draw(game.teamLogoImg, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
         game.batch.end();
         stage.draw();
     }

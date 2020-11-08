@@ -22,18 +22,23 @@ public class GameScreen extends ScreenAdapter implements InputProcessor {
     private static final int TILE_SIZE = 64;
     private final Auber auber;
 
+    /**
+     * A map layer, representing valid tiles for characters to enter (Room Tiles)
+     * Used for collision detection
+     */
     private final TiledMapTileLayer room;
+    /**
+     * Used for selecting the view window for the player
+     */
     OrthographicCamera camera;
-    GameContainer game;
-    TiledMap tiledMap;
     OrthogonalTiledMapRenderer tiledMapRenderer;
-
-    // TODO Move to separate file
+    TiledMap tiledMap;
+    GameContainer game;
 
     GameScreen(GameContainer game) {
         this.game = game;
-        float width = Gdx.graphics.getWidth();
-        float height = Gdx.graphics.getHeight();
+        float width = GameContainer.SCREEN_WIDTH;
+        float height = GameContainer.SCREEN_HEIGHT;
 
         tiledMap = new TmxMapLoader().load("Map.tmx");
 
@@ -43,12 +48,12 @@ public class GameScreen extends ScreenAdapter implements InputProcessor {
         tiledMapRenderer = new OrthogonalTiledMapRenderer(tiledMap, (float) 1 / TILE_SIZE);
 
         camera = new OrthographicCamera();
-        // Give a view of 10 tiles, adjusting for resolution
+        // Give a view of 10 tiles, adjusting for aspect ratio
         camera.setToOrtho(false, (width / height) * 10, 10);
         camera.update();
 
-        // Move Auber to centre room
-        auber = new Auber(31,32);
+        // Create and move Auber to centre room
+        auber = new Auber(31, 32);
         Gdx.input.setInputProcessor(this);
     }
 
@@ -58,7 +63,7 @@ public class GameScreen extends ScreenAdapter implements InputProcessor {
         Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
-        auber.updateAuber(delta,room);
+        auber.updateAuber(delta, room);
         // Set the camera to focus on Auber
         camera.position.x = auber.getXPosition();
         camera.position.y = auber.getYPosition();
@@ -73,8 +78,6 @@ public class GameScreen extends ScreenAdapter implements InputProcessor {
         batch.end();
 
     }
-
-
 
 
     /**

@@ -9,20 +9,41 @@ import com.badlogic.gdx.math.Vector2;
  * Handles updating position and collision detection
  */
 public class Movement {
-    public float VELOCITY_CHANGE = 2f;
+    /**
+     * The default max velocity of a entity
+     */
     public final float MAX_VELOCITY = 5f;
+    /**
+     * The amount velocity increases, when input is recorded
+     */
+    public float VELOCITY_CHANGE = 2f;
+    /**
+     * The current position of the entity
+     */
     public Vector2 position;
+    /**
+     * The current movement of the entity
+     */
     public Vector2 velocity;
+    /**
+     * The width of the entity (in grid tiles)
+     */
     public int width;
+    /**
+     * The height of the entity (in grid tiles)
+     */
     public int height;
+    /**
+     * The texture used to render the entity
+     */
     public Texture texture;
 
-    public Movement(Texture texture, float x, float y, int width, int height) {
+    public Movement(Texture texture, float x_pos, float y_pos, int width, int height) {
         this.texture = texture;
         this.width = width;
         this.height = height;
 
-        this.position = new Vector2(x, y);
+        this.position = new Vector2(x_pos, y_pos);
         this.velocity = new Vector2(0, 0);
 
     }
