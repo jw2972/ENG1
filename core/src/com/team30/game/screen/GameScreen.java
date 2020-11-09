@@ -89,7 +89,7 @@ public class GameScreen extends ScreenAdapter implements InputProcessor {
         batch.begin();
         auber.draw(batch);
         npcs.updateAndDraw(delta, room, batch);
-        infriltrators.updateAndDraw(delta, auber.position, room, systemContainer, batch);
+        infriltrators.updateAndDraw(delta, room, systemContainer, batch);
         batch.end();
 
     }
