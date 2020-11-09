@@ -5,10 +5,6 @@ import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 
 import java.util.Random;
 
-/**
- * Separate Movement System from Infriltrators
- * Select random points in space station to move to
- */
 public class NPC extends Movement {
     public NPC(TiledMapTileLayer room) {
         super(new Texture(("NPC.png")), 0, 0, 1, 1);

@@ -154,7 +154,7 @@
    <text fontfamily="Noto Sans" pixelsize="35" wrap="1" bold="1" halign="center" valign="center">Infirmary</text>
   </object>
  </objectgroup>
- <objectgroup id="6" name="Systems" visible="0">
+ <objectgroup id="6" name="Systems">
   <object id="55" name="OxygenTank" x="2240" y="640" width="64" height="64"/>
   <object id="56" name="OxygenTank" x="2944" y="1088" width="64" height="64"/>
   <object id="57" name="OxygenTank" x="1792" y="2240" width="64" height="64"/>

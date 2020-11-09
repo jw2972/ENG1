@@ -14,7 +14,7 @@ public class Movement {
     /**
      * The default max velocity of a entity
      */
-    public final float MAX_VELOCITY = 5f;
+    public float MAX_VELOCITY = 5f;
     /**
      * The amount velocity increases, when input is recorded
      */

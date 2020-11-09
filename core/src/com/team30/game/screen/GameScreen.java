@@ -7,6 +7,7 @@ import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.Batch;
+import com.badlogic.gdx.maps.MapLayer;
 import com.badlogic.gdx.maps.MapLayers;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
@@ -14,13 +15,15 @@ import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.team30.game.GameContainer;
 import com.team30.game.game_mechanics.Auber;
+import com.team30.game.game_mechanics.InfriltatorContainer;
 import com.team30.game.game_mechanics.NPCContainer;
+import com.team30.game.game_mechanics.SystemContainer;
 
 public class GameScreen extends ScreenAdapter implements InputProcessor {
     /**
      * The size of the tiles in pixels
      */
-    private static final int TILE_SIZE = 64;
+    public static final int TILE_SIZE = 64;
     private final Auber auber;
 
     /**
@@ -28,6 +31,9 @@ public class GameScreen extends ScreenAdapter implements InputProcessor {
      * Used for collision detection
      */
     private final TiledMapTileLayer room;
+    private final MapLayer systemsMap;
+    private final InfriltatorContainer infriltrators;
+    private final SystemContainer systemContainer;
     /**
      * Used for selecting the view window for the player
      */
@@ -36,6 +42,7 @@ public class GameScreen extends ScreenAdapter implements InputProcessor {
     TiledMap tiledMap;
     GameContainer game;
     NPCContainer npcs;
+
     GameScreen(GameContainer game) {
         this.game = game;
         float width = GameContainer.SCREEN_WIDTH;
@@ -45,6 +52,8 @@ public class GameScreen extends ScreenAdapter implements InputProcessor {
 
         MapLayers layers = tiledMap.getLayers();
         room = (TiledMapTileLayer) layers.get("Rooms");
+        systemsMap = layers.get("Systems");
+
         // Builds the renderer and sets the grid to one "tile"
         tiledMapRenderer = new OrthogonalTiledMapRenderer(tiledMap, (float) 1 / TILE_SIZE);
 
@@ -56,6 +65,8 @@ public class GameScreen extends ScreenAdapter implements InputProcessor {
         // Create and move Auber to centre room
         auber = new Auber(31, 32);
         npcs = new NPCContainer(room);
+        infriltrators = new InfriltatorContainer();
+        systemContainer = new SystemContainer(systemsMap);
         Gdx.input.setInputProcessor(this);
     }
 
@@ -77,7 +88,8 @@ public class GameScreen extends ScreenAdapter implements InputProcessor {
         Batch batch = tiledMapRenderer.getBatch();
         batch.begin();
         auber.draw(batch);
-        npcs.update(delta, room, batch);
+        npcs.updateAndDraw(delta, room, batch);
+        infriltrators.updateAndDraw(delta, auber.position, room, systemContainer, batch);
         batch.end();
 
     }

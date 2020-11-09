@@ -7,4 +7,5 @@ public class Auber extends Movement {
         super(new Texture("Auber.png"), x, y,1,1);
         this.VELOCITY_CHANGE=2f;
     }
+
 }

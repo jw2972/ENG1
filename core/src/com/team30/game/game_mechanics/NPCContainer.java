@@ -25,7 +25,7 @@ public class NPCContainer {
      * @param room      The map of valid room cells
      * @param batch     The render batch
      */
-    public void update(float deltaTime, TiledMapTileLayer room, Batch batch) {
+    public void updateAndDraw(float deltaTime, TiledMapTileLayer room, Batch batch) {
         for (NPC npc : npcs) {
             npc.updatePosition(deltaTime, room);
             npc.draw(batch);
