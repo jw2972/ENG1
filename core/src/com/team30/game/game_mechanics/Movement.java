@@ -2,6 +2,7 @@ package com.team30.game.game_mechanics;
 
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.math.Vector2;
 
@@ -38,16 +39,19 @@ public class Movement {
     /**
      * The texture used to render the entity
      */
-    public Texture texture;
+    private TextureRegion region;
 
     public Movement(Texture texture, float x_pos, float y_pos, int width, int height) {
-        this.texture = texture;
+
         this.width = width;
         this.height = height;
 
         this.position = new Vector2(x_pos, y_pos);
         this.velocity = new Vector2(0, 0);
+        if (texture != null) {
+            this.region = new TextureRegion(texture, 0, 0, texture.getWidth(), texture.getHeight());
 
+        }
     }
 
     /**
@@ -68,7 +72,7 @@ public class Movement {
     }
 
     public void draw(Batch batch) {
-        batch.draw(texture, getXPosition(), getYPosition(), width, height);
+        batch.draw(region, getXPosition(), getYPosition(), width / 2f, height / 2f, width, height, 1f, 1f, velocity.angle() + 90);
     }
 
     /**
