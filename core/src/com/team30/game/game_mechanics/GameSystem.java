@@ -12,15 +12,16 @@ public class GameSystem extends Movement {
         this.name = name;
         this.MAX_VELOCITY = 0f;
         this.VELOCITY_CHANGE = 0f;
-        this.health = 100;
+        this.health = health;
     }
 
     public int damaged(int inflicted) {
         this.health = this.health - inflicted;
         if (this.health < 50) {
-            this.coolDown = 10;
+
             //this.texture =
         }
+        this.coolDown = 10;
         return health;
     }
     /**
