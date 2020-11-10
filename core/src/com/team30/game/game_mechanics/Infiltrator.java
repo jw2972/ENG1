@@ -84,6 +84,7 @@ public class Infiltrator extends Movement {
         this.velocity.y = 0;
         if (moves.isEmpty()) {
             // TODO Start infiltrator damage
+
             System.out.println("DO DAMAGE");
         } else {
             Movements move = moves.remove();

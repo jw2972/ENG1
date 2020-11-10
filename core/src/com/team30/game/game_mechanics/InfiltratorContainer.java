@@ -8,7 +8,7 @@ import java.util.ArrayList;
 /**
  * Wrapper class for all infiltrators, and handles the movement and rendering of them
  */
-public class InfriltatorContainer {
+public class InfiltratorContainer {
     /**
      * The maximum number of inftriltrators to spawn
      */
@@ -30,7 +30,7 @@ public class InfriltatorContainer {
      */
     private float timeSinceLastUpdate;
 
-    public InfriltatorContainer() {
+    public InfiltratorContainer() {
         this.spawnedInfriltrators = 0;
         this.timeSinceLastSpawn = 0;
         this.timeSinceLastUpdate = 0;

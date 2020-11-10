@@ -15,7 +15,7 @@ import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.team30.game.GameContainer;
 import com.team30.game.game_mechanics.Auber;
-import com.team30.game.game_mechanics.InfriltatorContainer;
+import com.team30.game.game_mechanics.InfiltratorContainer;
 import com.team30.game.game_mechanics.NPCContainer;
 import com.team30.game.game_mechanics.SystemContainer;
 
@@ -32,7 +32,7 @@ public class GameScreen extends ScreenAdapter implements InputProcessor {
      */
     private final TiledMapTileLayer room;
     private final MapLayer systemsMap;
-    private final InfriltatorContainer infriltrators;
+    private final InfiltratorContainer infiltrators;
     private final SystemContainer systemContainer;
     /**
      * Used for selecting the view window for the player
@@ -65,7 +65,7 @@ public class GameScreen extends ScreenAdapter implements InputProcessor {
         // Create and move Auber to centre room
         auber = new Auber(31, 32);
         npcs = new NPCContainer(room);
-        infriltrators = new InfriltatorContainer();
+        infiltrators = new InfiltratorContainer();
         systemContainer = new SystemContainer(systemsMap);
         Gdx.input.setInputProcessor(this);
     }
@@ -89,7 +89,7 @@ public class GameScreen extends ScreenAdapter implements InputProcessor {
         batch.begin();
         auber.draw(batch);
         npcs.updateAndDraw(delta, room, batch);
-        infriltrators.updateAndDraw(delta, room, systemContainer, batch);
+        infiltrators.updateAndDraw(delta, room, systemContainer, batch);
         batch.end();
 
     }
