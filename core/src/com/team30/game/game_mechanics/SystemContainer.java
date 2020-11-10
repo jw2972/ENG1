@@ -19,6 +19,7 @@ public class SystemContainer {
      * y
      * width
      * height
+     * health
      *
      * @param map The object layer containing systems
      */
@@ -44,7 +45,7 @@ public class SystemContainer {
             int width = ((int) (float) widthObject) / GameScreen.TILE_SIZE;
             int height = ((int) (float) heightObject) / GameScreen.TILE_SIZE;
 
-            this.systems[index] = new GameSystem(object.getName(), x_pos, y_pos, width, height);
+            this.systems[index] = new GameSystem(object.getName(), x_pos, y_pos, width, height, 100);
             index += 1;
 
         }

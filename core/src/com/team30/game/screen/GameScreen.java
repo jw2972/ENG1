@@ -143,7 +143,6 @@ public class GameScreen extends ScreenAdapter implements InputProcessor {
 
     @Override
     public boolean keyTyped(char character) {
-
         return false;
     }
 

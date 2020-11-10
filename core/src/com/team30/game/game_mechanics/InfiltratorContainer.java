@@ -10,28 +10,28 @@ import java.util.ArrayList;
  */
 public class InfiltratorContainer {
     /**
-     * The maximum number of inftriltrators to spawn
+     * The maximum number of infiltrators to spawn
      */
     private static final int MAX_INFILTRATORS = 10;
     /**
-     * The infriltrators that are currently "alive" on the map
+     * The infiltrators that are currently "alive" on the map
      */
     private final ArrayList<Infiltrator> currentInfiltrators;
     /**
-     * The number of infriltrators that have been spawned so far
+     * The number of infiltrators that have been spawned so far
      */
-    private int spawnedInfriltrators;
+    private int spawnedInfiltrators;
     /**
-     * The time since an infriltrator was last spawned
+     * The time since an infiltrator was last spawned
      */
     private float timeSinceLastSpawn;
     /**
-     * The time since the movements of the infriltrators were last updated
+     * The time since the movements of the infiltrators were last updated
      */
     private float timeSinceLastUpdate;
 
     public InfiltratorContainer() {
-        this.spawnedInfriltrators = 0;
+        this.spawnedInfiltrators = 0;
         this.timeSinceLastSpawn = 0;
         this.timeSinceLastUpdate = 0;
         this.currentInfiltrators = new ArrayList<>();
@@ -41,7 +41,7 @@ public class InfiltratorContainer {
         timeSinceLastSpawn += deltaTime;
         timeSinceLastUpdate += deltaTime;
         if (timeSinceLastSpawn > 10) {
-            spawnInfriltrator(room);
+            spawnInfiltrator(room);
         }
 
         for (Infiltrator infiltrator : currentInfiltrators) {
@@ -60,9 +60,9 @@ public class InfiltratorContainer {
      *
      * @param room The map of valid room tiles
      */
-    public void spawnInfriltrator(TiledMapTileLayer room) {
-        if (spawnedInfriltrators < MAX_INFILTRATORS) {
-            spawnedInfriltrators += 1;
+    public void spawnInfiltrator(TiledMapTileLayer room) {
+        if (spawnedInfiltrators < MAX_INFILTRATORS) {
+            spawnedInfiltrators += 1;
             timeSinceLastSpawn = 0;
             currentInfiltrators.add(new Infiltrator(room));
         }

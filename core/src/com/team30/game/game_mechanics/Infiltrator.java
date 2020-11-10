@@ -14,6 +14,7 @@ public class Infiltrator extends Movement {
      * The list of movements to take
      */
     Queue<Movements> moves;
+    String name;
 
     /**
      * Spawns a new infiltrator at a random position
@@ -85,8 +86,9 @@ public class Infiltrator extends Movement {
         if (moves.isEmpty()) {
             // TODO Start infiltrator damage
 
-            System.out.println("DO DAMAGE");
-        } else {
+            System.out.println("DOING DAMAGE");
+        }
+        else {
             Movements move = moves.remove();
             this.velocity.add(getMovement(move)).scl(this.MAX_VELOCITY);
         }
