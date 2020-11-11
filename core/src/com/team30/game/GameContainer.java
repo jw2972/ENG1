@@ -1,9 +1,11 @@
 package com.team30.game;
 
 import com.badlogic.gdx.Game;
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.team30.game.screen.MainMenu;
 
 public class GameContainer extends Game {
@@ -11,6 +13,7 @@ public class GameContainer extends Game {
 	public static final float SCREEN_WIDTH = 640;
 	public static final float SCREEN_HEIGHT = 480;
 	public BitmapFont font;
+	public Skin skin;
 	public SpriteBatch batch;
 	public Texture teamLogoImg;
 
@@ -19,6 +22,7 @@ public class GameContainer extends Game {
 		batch = new SpriteBatch();
 		font = new BitmapFont();
 		teamLogoImg = new Texture("No.png");
+		skin = new Skin(Gdx.files.internal("clean-crispy/skin/clean-crispy-ui.json"));
 		this.setScreen(new MainMenu(this));
 	}
 

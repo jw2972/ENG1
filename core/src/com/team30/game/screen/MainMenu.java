@@ -30,11 +30,7 @@ public class MainMenu extends ScreenAdapter {
         Table table = new Table();
         table.setFillParent(true);
         stage.addActor(table);
-
-        TextButton.TextButtonStyle style = new TextButton.TextButtonStyle();
-        style.font = game.font;
-
-        TextButton start = new TextButton("Start", style);
+        TextButton start = new TextButton("Start", game.skin);
         start.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
@@ -43,7 +39,7 @@ public class MainMenu extends ScreenAdapter {
                 dispose();
             }
         });
-        TextButton settings = new TextButton("Settings", style);
+        TextButton settings = new TextButton("Settings", game.skin);
         settings.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
@@ -52,7 +48,7 @@ public class MainMenu extends ScreenAdapter {
                 dispose();
             }
         });
-        TextButton quit = new TextButton("Quit", style);
+        TextButton quit = new TextButton("Quit", game.skin);
         quit.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
