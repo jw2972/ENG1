@@ -64,8 +64,7 @@ public class InfiltratorContainer {
         if (spawnedInfiltrators < MAX_INFILTRATORS) {
             spawnedInfiltrators += 1;
             timeSinceLastSpawn = 0;
-            currentInfiltrators.add(new Infiltrator(room));
+            currentInfiltrators.add(new Infiltrator(room, "inf_" + String.valueOf(this.spawnedInfiltrators)));
         }
-
     }
 }

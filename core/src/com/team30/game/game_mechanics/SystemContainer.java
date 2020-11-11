@@ -4,6 +4,7 @@ import com.badlogic.gdx.maps.MapLayer;
 import com.badlogic.gdx.maps.MapObject;
 import com.badlogic.gdx.maps.MapProperties;
 import com.team30.game.screen.GameScreen;
+import java.util.ArrayList;
 
 /**
  * Handles all systems, and rendering of them
@@ -20,6 +21,7 @@ public class SystemContainer {
      * width
      * height
      * health
+     * active
      *
      * @param map The object layer containing systems
      */
@@ -54,8 +56,21 @@ public class SystemContainer {
     /**
      * @return The list of currently active systems
      */
-    // TODO Only return "active" systems
+    // TODO? consider updating when systems are damaged
     public GameSystem[] getActiveSystems() {
-        return systems;
+        // get the index's of the active systems
+        ArrayList<Integer> pointers = new ArrayList<>();
+        for (int i = 0; i < this.systems.length; i++) {
+            if (this.systems[i].active) {
+                pointers.add(i);
+            }
+        }
+        // add those active systems to a GameSystem to return
+        GameSystem[] activeSystems = new GameSystem[pointers.size()];
+        for (int i = 0; i < pointers.size(); i++)
+        {
+            activeSystems[i] = this.systems[pointers.get(i)];
+        }
+        return activeSystems;
     }
 }

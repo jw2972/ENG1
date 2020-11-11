@@ -3,9 +3,10 @@ package com.team30.game.game_mechanics;
 import com.badlogic.gdx.graphics.g2d.Batch;
 
 public class GameSystem extends Movement {
-    private final String name;
+    public final String name;
     private int health;
-    private int coolDown;
+    public boolean active;
+    private double coolDown;
 
     public GameSystem(String name, int x_pos, int y_pos, int width, int height, int health) {
         super(null, x_pos, y_pos, width, height);
@@ -13,15 +14,20 @@ public class GameSystem extends Movement {
         this.MAX_VELOCITY = 0f;
         this.VELOCITY_CHANGE = 0f;
         this.health = health;
+        this.active = true;
     }
 
     public int damaged(int inflicted) {
+        System.out.println("Inflicting: " + inflicted + " to system: " + this.name);
         this.health = this.health - inflicted;
         if (this.health < 50) {
-
             //this.texture =
         }
-        this.coolDown = 10;
+        if (this.health <= 0) {
+            this.active = false;
+            this.health = 0;
+        }
+        this.coolDown = 10.0f;
         return health;
     }
     /**

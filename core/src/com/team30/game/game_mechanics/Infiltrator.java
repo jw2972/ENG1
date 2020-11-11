@@ -1,5 +1,6 @@
 package com.team30.game.game_mechanics;
 
+import com.badlogic.gdx.Game;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.math.Vector2;
@@ -14,18 +15,19 @@ public class Infiltrator extends Movement {
      * The list of movements to take
      */
     Queue<Movements> moves;
-    String name;
+    public String name;
 
     /**
      * Spawns a new infiltrator at a random position
      *
      * @param room The map of valid tiles
      */
-    public Infiltrator(TiledMapTileLayer room) {
+    public Infiltrator(TiledMapTileLayer room, String name) {
         super(new Texture(("Infiltrator.png")), 32, 32, 1, 1);
+        this.name = name;
         moves = new LinkedList<>();
         this.moveRandomCell(room);
-        System.out.println("Spawned infiltrator at: " + this.position.toString());
+        System.out.println("Spawned infiltrator:" + this.name.toString() + " at: " + this.position.toString());
     }
 
 
@@ -36,7 +38,7 @@ public class Infiltrator extends Movement {
      * @param systemContainer The container with positions of all active systems
      * @return Vector2 The direction of the target system
      */
-    public static Vector2 getClosestSystem(Vector2 position, SystemContainer systemContainer) {
+    public static Vector2 getClosestSystemVect(Vector2 position, SystemContainer systemContainer) {
         float minDistance = Float.MAX_VALUE;
         Vector2 direction = new Vector2();
         for (GameSystem system : systemContainer.getActiveSystems()) {
@@ -47,6 +49,26 @@ public class Infiltrator extends Movement {
             }
         }
         return direction;
+    }
+
+    /**
+     * Returns the closest active system
+     *
+     * @param position        The position to start from
+     * @param systemContainer The container with positions of all active systems
+     * @return GameSystem    The target system
+     */
+    public static GameSystem getClosestSystem(Vector2 position, SystemContainer systemContainer) {
+        float minDistance = Float.MAX_VALUE;
+        GameSystem closestSystem  = systemContainer.systems[0];
+        for (GameSystem system : systemContainer.getActiveSystems()) {
+            float currentDistance = position.dst(system.position);
+            if (currentDistance < minDistance) {
+                minDistance = currentDistance;
+                closestSystem = system;
+            }
+        }
+        return closestSystem;
     }
 
     /**
@@ -86,7 +108,10 @@ public class Infiltrator extends Movement {
         if (moves.isEmpty()) {
             // TODO Start infiltrator damage
 
-            System.out.println("DOING DAMAGE");
+            GameSystem toDamage = getClosestSystem(position, systems);
+            toDamage.damaged(50);
+            System.out.println("Infiltrator: " + this.name.toString() + " attacking: " + toDamage.name.toString());
+            //System.out.println("DOING DAMAGE");
         }
         else {
             Movements move = moves.remove();
@@ -112,7 +137,7 @@ public class Infiltrator extends Movement {
             currentNode = possibleMoves.remove(possibleMoves.firstKey());
             visited.add(currentNode.getPosition());
             // Checks if we are at a system
-            Vector2 closestSystem = getClosestSystem(currentNode.getPosition(), systems);
+            Vector2 closestSystem = getClosestSystemVect(currentNode.getPosition(), systems);
             if (closestSystem.len() < 1) {
                 return currentNode;
             }
@@ -121,7 +146,7 @@ public class Infiltrator extends Movement {
                 Vector2 position = currentNode.getPosition().cpy().add(getMovement(move));
                 if (!visited.contains(position)) {
                     int cost = currentNode.getCost() + 1;
-                    float heuristic = getClosestSystem(position, systems).len();
+                    float heuristic = getClosestSystemVect(position, systems).len();
                     possibleMoves.put(heuristic + cost, new Node(currentNode, position, move, cost, heuristic));
                 }
             }
