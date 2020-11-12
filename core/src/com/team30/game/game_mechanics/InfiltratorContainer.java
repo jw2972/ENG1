@@ -25,29 +25,25 @@ public class InfiltratorContainer {
      * The time since an infiltrator was last spawned
      */
     private float timeSinceLastSpawn;
-    /**
-     * The time since the movements of the infiltrators were last updated
-     */
-    private float timeSinceLastUpdate;
+
 
     public InfiltratorContainer() {
         this.spawnedInfiltrators = 0;
         this.timeSinceLastSpawn = 0;
-        this.timeSinceLastUpdate = 0;
         this.currentInfiltrators = new ArrayList<>();
     }
 
     public void updateAndDraw(float deltaTime, TiledMapTileLayer room, SystemContainer systemContainer, Batch batch) {
         timeSinceLastSpawn += deltaTime;
-        timeSinceLastUpdate += deltaTime;
         if (timeSinceLastSpawn > 10) {
             spawnInfiltrator(room);
         }
 
         for (Infiltrator infiltrator : currentInfiltrators) {
-            if (timeSinceLastUpdate > 0.2) {
+            infiltrator.incrementTimeSinceLastUpdate(deltaTime);
+            if (infiltrator.getTimeSinceLastUpdate() > 0.2) {
                 infiltrator.moveInfiltrator(room, systemContainer);
-                timeSinceLastUpdate = 0;
+                infiltrator.resetTimeSinceLastUpdate();
             }
             infiltrator.updatePosition(deltaTime, room);
             infiltrator.draw(batch);
@@ -64,7 +60,7 @@ public class InfiltratorContainer {
         if (spawnedInfiltrators < MAX_INFILTRATORS) {
             spawnedInfiltrators += 1;
             timeSinceLastSpawn = 0;
-            currentInfiltrators.add(new Infiltrator(room, "inf_" + String.valueOf(this.spawnedInfiltrators)));
+            currentInfiltrators.add(new Infiltrator(room, "inf_" + this.spawnedInfiltrators));
         }
     }
 }

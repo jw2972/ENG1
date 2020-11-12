@@ -16,6 +16,12 @@ public class Infiltrator extends Movement {
     Queue<Movements> moves;
     public String name;
     private GameSystem targetSystem;
+
+    /**
+     * The time since the movements of the infiltrators were last updated
+     */
+    private float timeSinceLastUpdate;
+
     /**
      * Spawns a new infiltrator at a random position
      *
@@ -25,9 +31,22 @@ public class Infiltrator extends Movement {
         super(new Texture(("Infiltrator.png")), 32, 32, 1, 1);
         this.name = name;
         this.targetSystem = null;
+        this.timeSinceLastUpdate = 0f;
         moves = new LinkedList<>();
         this.moveRandomCell(room);
         System.out.println("Spawned infiltrator:" + this.name + " at: " + this.position.toString());
+    }
+
+    public float getTimeSinceLastUpdate() {
+        return timeSinceLastUpdate;
+    }
+
+    public void incrementTimeSinceLastUpdate(float incrementTime) {
+        this.timeSinceLastUpdate += incrementTime;
+    }
+
+    public void resetTimeSinceLastUpdate() {
+        this.timeSinceLastUpdate = 0;
     }
 
 
@@ -100,7 +119,6 @@ public class Infiltrator extends Movement {
      */
     public void moveInfiltrator(TiledMapTileLayer room, SystemContainer systems) {
         if (moves.isEmpty() && targetSystem == null) {
-            System.out.println("Finding path for infiltrator: " + this.name);
             Node node = getMove(room, systems);
             moves = node.exportPath();
         }
@@ -109,7 +127,7 @@ public class Infiltrator extends Movement {
         if (targetSystem != null) {
             if (targetSystem.health > 0) {
                 targetSystem.damaged(50);
-                System.out.println("Infiltrator: " + this.name + " attacking: " + targetSystem.name + " with health remainging: " + targetSystem.health);
+                System.out.println("Infiltrator: " + this.name + " attacking: " + targetSystem.name + " with health remaining: " + targetSystem.health);
             } else {
                 targetSystem = null;
             }
