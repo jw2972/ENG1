@@ -10,6 +10,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.team30.game.GameContainer;
+import com.team30.game.Recording.RecordingContainer;
 
 import static com.team30.game.GameContainer.SCREEN_HEIGHT;
 import static com.team30.game.GameContainer.SCREEN_WIDTH;
@@ -30,21 +31,30 @@ public class MainMenu extends ScreenAdapter {
         Table table = new Table();
         table.setFillParent(true);
         stage.addActor(table);
-        TextButton start = new TextButton("Start", game.skin);
+        TextButton start = new TextButton("Start (Normal Game)", game.skin);
         start.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
                 System.out.println("Start Game");
-                game.setScreen(new GameScreen(game));
+                game.setScreen(new GameScreen(game, false));
                 dispose();
             }
         });
-        TextButton settings = new TextButton("Settings", game.skin);
-        settings.addListener(new ChangeListener() {
+        TextButton startRecording = new TextButton("Start (Recording)", game.skin);
+        startRecording.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
-                System.out.println("Settings");
-                game.setScreen(new Settings(game));
+                System.out.println("Start Game Recording");
+                game.setScreen(new GameScreen(game, true));
+                dispose();
+            }
+        });
+        TextButton playback = new TextButton("Playback Recording", game.skin);
+        playback.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                System.out.println("Playback Recording");
+                game.setScreen(new GameScreen(game, new RecordingContainer("Test.json")));
                 dispose();
             }
         });
@@ -57,7 +67,8 @@ public class MainMenu extends ScreenAdapter {
             }
         });
         table.add(start).space(16).row();
-        table.add(settings).space(16).row();
+        table.add(startRecording).space(16).row();
+        table.add(playback).space(16).row();
         table.add(quit).space(16).row();
     }
 
