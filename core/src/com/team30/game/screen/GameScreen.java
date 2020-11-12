@@ -63,7 +63,7 @@ public class GameScreen extends ScreenAdapter implements InputProcessor {
         camera.update();
 
         // Create and move Auber to centre room
-        auber = new Auber(31, 32);
+        auber = new Auber(10, 10);
         npcs = new NPCContainer(room);
         infiltrators = new InfiltratorContainer();
         systemContainer = new SystemContainer(systemsMap);
@@ -98,8 +98,8 @@ public class GameScreen extends ScreenAdapter implements InputProcessor {
     /**
      * Key not being pressed, so set velocity to zero
      *
-     * @param keycode
-     * @return
+     * @param keycode the keycode of the pressed key
+     * @return false
      */
     @Override
     public boolean keyUp(int keycode) {
@@ -121,8 +121,8 @@ public class GameScreen extends ScreenAdapter implements InputProcessor {
     /**
      * Key not being pressed, so set velocity to max
      *
-     * @param keycode
-     * @return
+     * @param keycode the keycode of the pressed key
+     * @return false a generic return
      */
     @Override
     public boolean keyDown(int keycode) {
