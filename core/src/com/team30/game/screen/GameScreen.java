@@ -48,7 +48,7 @@ public class GameScreen extends ScreenAdapter implements InputProcessor {
         float width = GameContainer.SCREEN_WIDTH;
         float height = GameContainer.SCREEN_HEIGHT;
 
-        tiledMap = new TmxMapLoader().load("Map.tmx");
+        tiledMap = new TmxMapLoader().load("test_map.tmx");
 
         MapLayers layers = tiledMap.getLayers();
         room = (TiledMapTileLayer) layers.get("Rooms");
