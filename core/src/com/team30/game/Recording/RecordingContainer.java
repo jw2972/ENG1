@@ -17,15 +17,19 @@ public class RecordingContainer {
     private LinkedList<LinkedList<Action>> recordings;
     private int snapshotIndex;
 
+    /**
+     * Creates a new blank recording
+     */
     public RecordingContainer() {
         recordings = new LinkedList<>();
         snapshotIndex = -1;
     }
 
-    public RecordingContainer(LinkedList<LinkedList<Action>> recordings) {
-        this.recordings = recordings;
-    }
-
+    /**
+     * Loads an existing recording from the given file
+     *
+     * @param filename
+     */
     public RecordingContainer(String filename) {
         Gson gson = new Gson();
         try {
@@ -34,6 +38,7 @@ public class RecordingContainer {
             System.out.println(recordings);
             this.snapshotIndex = 0;
         } catch (FileNotFoundException e) {
+            // TODO Proper error handling
             e.printStackTrace();
         }
     }
@@ -70,7 +75,7 @@ public class RecordingContainer {
     }
 
     /**
-     * Adds a new action to the currently selected snapshot
+     * Adds all the given actions to the currently selected snapshot
      *
      * @param action The action to save
      */
@@ -78,15 +83,20 @@ public class RecordingContainer {
         this.recordings.get(snapshotIndex).addAll(action);
     }
 
+    /**
+     * Exports this recording instance to a file
+     */
     public void exportRecording() {
         Gson gson = new Gson();
         String json = null;
         try {
+            // TODO Change this name
             FileWriter writer = new FileWriter("Test.json");
             gson.toJson(this, writer);
             writer.flush();
             writer.close();
         } catch (IOException e) {
+            //TODO Error Handling
             e.printStackTrace();
         }
         System.out.println(json);

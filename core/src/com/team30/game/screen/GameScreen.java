@@ -41,17 +41,25 @@ public class GameScreen extends ScreenAdapter implements InputProcessor {
     OrthogonalTiledMapRenderer tiledMapRenderer;
     TiledMap tiledMap;
     GameContainer game;
+
     float timeSinceLastSnapshot;
     RecordingContainer recording;
     Boolean shouldRecord;
     Boolean isPlayback;
 
+    /**
+     * Starts a new game with player controlled Auber
+     *
+     * @param game         The parent container
+     * @param shouldRecord Whether this game should be recorded
+     */
     GameScreen(GameContainer game, Boolean shouldRecord) {
         this.game = game;
         this.timeSinceLastSnapshot = 0;
-        recording = new RecordingContainer();
         this.shouldRecord = shouldRecord;
         this.isPlayback = false;
+        recording = new RecordingContainer();
+
         float width = GameContainer.SCREEN_WIDTH;
         float height = GameContainer.SCREEN_HEIGHT;
 
@@ -72,12 +80,19 @@ public class GameScreen extends ScreenAdapter implements InputProcessor {
         Gdx.input.setInputProcessor(this);
     }
 
+    /**
+     * Creates a new playback instance from the given recording
+     *
+     * @param game      The parent container
+     * @param recording The recording to playback from
+     */
     GameScreen(GameContainer game, RecordingContainer recording) {
         this.game = game;
         this.timeSinceLastSnapshot = 0;
-        this.recording = recording;
         this.shouldRecord = false;
         this.isPlayback = true;
+        this.recording = recording;
+
         float width = GameContainer.SCREEN_WIDTH;
         float height = GameContainer.SCREEN_HEIGHT;
 
@@ -104,11 +119,13 @@ public class GameScreen extends ScreenAdapter implements InputProcessor {
         Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         timeSinceLastSnapshot += delta;
+
+        // Tries to playback recording
         if (isPlayback & timeSinceLastSnapshot > SNAPSHOT_INTERVAL) {
             timeSinceLastSnapshot -= SNAPSHOT_INTERVAL;
             LinkedList<Action> actions = recording.getSnapshot();
             for (Action action : actions) {
-                switch (action.type) {
+                switch (action.getActionType()) {
                     case AuberMove:
                         auber.setXVelocity(action.getXVelocity());
                         auber.setYVelocity(action.getYVelocity());
@@ -146,6 +163,8 @@ public class GameScreen extends ScreenAdapter implements InputProcessor {
         batch.begin();
         auber.draw(batch);
         batch.end();
+
+        // Records any movements made
         if (shouldRecord & timeSinceLastSnapshot > SNAPSHOT_INTERVAL) {
             recording.newSnapshot();
             System.out.println(auber.velocity);
@@ -170,6 +189,7 @@ public class GameScreen extends ScreenAdapter implements InputProcessor {
             }
             game.setScreen(new MainMenu(game));
         }
+        // Disable player input for playback
         if (!isPlayback) {
             if (keycode == Input.Keys.LEFT) {
                 auber.setXVelocity(0);
