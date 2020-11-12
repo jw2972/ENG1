@@ -118,4 +118,12 @@ public class Movement {
     public void setYVelocity(float velocity) {
         this.velocity.y = velocity;
     }
+
+    public void setXPosition(float xPosition) {
+        this.position.x = xPosition;
+    }
+
+    public void setYPosition(float yPosition) {
+        this.position.y = yPosition;
+    }
 }

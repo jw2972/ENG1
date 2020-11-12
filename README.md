@@ -1,10 +1,11 @@
 # ENG1
 A Java game as described by ENG1 module CompSci York Uni.
 
+Skins sourced from: https://github.com/czyzby/gdx-skins
 
 Graphics Workflow:
     Design graphics in inkscrape
-    (Believe one tile is 64pxx64px)
+    (One tile is 64px, 64px)
     
     Export as a tileset
 
