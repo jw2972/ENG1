@@ -1,6 +1,5 @@
 package com.team30.game.game_mechanics;
 
-import com.badlogic.gdx.Game;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.math.Vector2;
@@ -16,7 +15,7 @@ public class Infiltrator extends Movement {
      */
     Queue<Movements> moves;
     public String name;
-
+    private GameSystem targetSystem;
     /**
      * Spawns a new infiltrator at a random position
      *
@@ -25,9 +24,10 @@ public class Infiltrator extends Movement {
     public Infiltrator(TiledMapTileLayer room, String name) {
         super(new Texture(("Infiltrator.png")), 32, 32, 1, 1);
         this.name = name;
+        this.targetSystem = null;
         moves = new LinkedList<>();
         this.moveRandomCell(room);
-        System.out.println("Spawned infiltrator:" + this.name.toString() + " at: " + this.position.toString());
+        System.out.println("Spawned infiltrator:" + this.name + " at: " + this.position.toString());
     }
 
 
@@ -60,7 +60,7 @@ public class Infiltrator extends Movement {
      */
     public static GameSystem getClosestSystem(Vector2 position, SystemContainer systemContainer) {
         float minDistance = Float.MAX_VALUE;
-        GameSystem closestSystem  = systemContainer.systems[0];
+        GameSystem closestSystem = systemContainer.systems[0];
         for (GameSystem system : systemContainer.getActiveSystems()) {
             float currentDistance = position.dst(system.position);
             if (currentDistance < minDistance) {
@@ -99,24 +99,30 @@ public class Infiltrator extends Movement {
      * @param systems The location of all systems
      */
     public void moveInfiltrator(TiledMapTileLayer room, SystemContainer systems) {
-        if (moves.isEmpty()) {
+        if (moves.isEmpty() && targetSystem == null) {
+            System.out.println("Finding path for infiltrator: " + this.name);
             Node node = getMove(room, systems);
             moves = node.exportPath();
         }
         this.velocity.x = 0;
         this.velocity.y = 0;
-        if (moves.isEmpty()) {
-            // TODO Start infiltrator damage
-
-            GameSystem toDamage = getClosestSystem(position, systems);
-            toDamage.damaged(50);
-            System.out.println("Infiltrator: " + this.name.toString() + " attacking: " + toDamage.name.toString());
-            //System.out.println("DOING DAMAGE");
-        }
-        else {
+        if (targetSystem != null) {
+            if (targetSystem.health > 0) {
+                targetSystem.damaged(50);
+                System.out.println("Infiltrator: " + this.name + " attacking: " + targetSystem.name + " with health remainging: " + targetSystem.health);
+            } else {
+                targetSystem = null;
+            }
+        } else if (!moves.isEmpty()) {
             Movements move = moves.remove();
             this.velocity.add(getMovement(move)).scl(this.MAX_VELOCITY);
+            // We have reached the target system
+            if (moves.isEmpty()) {
+                targetSystem = getClosestSystem(position, systems);
+                System.out.println("At target system: " + targetSystem.name);
+            }
         }
+
     }
 
     /**

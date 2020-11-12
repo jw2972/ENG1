@@ -4,7 +4,7 @@ import com.badlogic.gdx.graphics.g2d.Batch;
 
 public class GameSystem extends Movement {
     public final String name;
-    private int health;
+    public int health;
     public boolean active;
     private double coolDown;
 
