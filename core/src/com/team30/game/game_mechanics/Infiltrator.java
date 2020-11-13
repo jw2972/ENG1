@@ -62,7 +62,7 @@ public class Infiltrator extends Movement {
         Vector2 direction = new Vector2();
         for (GameSystem system : systemContainer.getActiveSystems()) {
             float currentDistance = position.dst(system.position);
-            if (currentDistance < minDistance) {
+            if (currentDistance < minDistance && system.getCoolDown() <= 0.0) {
                 minDistance = currentDistance;
                 direction = system.position.cpy().sub(position);
             }

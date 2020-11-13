@@ -73,4 +73,16 @@ public class SystemContainer {
         }
         return activeSystems;
     }
+
+    /**
+     *
+     * @param deltaTime takes the time passed since last updated
+     * @return  the number of active systems
+     */
+    public int updateAndGetActive(float deltaTime){
+        for (GameSystem system : systems) {
+            system.updateCoolDown(deltaTime);
+        }
+        return this.getActiveSystems().length;
+    }
 }

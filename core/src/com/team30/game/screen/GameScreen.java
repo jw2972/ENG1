@@ -90,6 +90,9 @@ public class GameScreen extends ScreenAdapter implements InputProcessor {
         auber.draw(batch);
         npcs.updateAndDraw(delta, room, batch);
         infiltrators.updateAndDraw(delta, room, systemContainer, batch);
+        if (systemContainer.updateAndGetActive(delta) <= 1) {
+            //TODO game end condition
+        }
         batch.end();
 
     }
