@@ -54,43 +54,32 @@ public class SystemContainer {
     }
 
     /**
-     * @return The list of currently active systems
+     * @return The ArrayList of currently active systems
      */
     // TODO? consider updating when systems are damaged
-    public GameSystem[] getActiveSystems() {
+    public ArrayList<GameSystem> getActiveSystems() {
         // get the index's of the active systems
-        ArrayList<Integer> pointers = new ArrayList<>();
+        ArrayList<GameSystem> activeSystems = new ArrayList<>();
         for (int i = 0; i < this.systems.length; i++) {
             if (this.systems[i].active) {
-                pointers.add(i);
+                activeSystems.add(systems[i]);
             }
-        }
-        // add those active systems to a GameSystem to return
-        GameSystem[] activeSystems = new GameSystem[pointers.size()];
-        for (int i = 0; i < pointers.size(); i++)
-        {
-            activeSystems[i] = this.systems[pointers.get(i)];
         }
         return activeSystems;
     }
+
 
     /**
      * @return The list of currently active systems that can aren't on cool down
      */
     // TODO? consider updating when systems are damaged
-    public GameSystem[] getAttackableSystems() {
+    public ArrayList<GameSystem>  getAttackableSystems() {
         // get the index's of the active systems
-        ArrayList<Integer> pointers = new ArrayList<>();
+        ArrayList<GameSystem> activeSystems = new ArrayList<>();
         for (int i = 0; i < this.systems.length; i++) {
-            if (this.systems[i].active && this.systems[i].getCoolDown() <= 0.0f) {
-                pointers.add(i);
+            if (this.systems[i].active && this.systems[i].getCoolDown() <= 0.0) {
+                activeSystems.add(systems[i]);
             }
-        }
-        // add those active systems to a GameSystem to return
-        GameSystem[] activeSystems = new GameSystem[pointers.size()];
-        for (int i = 0; i < pointers.size(); i++)
-        {
-            activeSystems[i] = this.systems[pointers.get(i)];
         }
         return activeSystems;
     }
@@ -104,6 +93,6 @@ public class SystemContainer {
         for (GameSystem system : systems) {
             system.updateCoolDown(deltaTime);
         }
-        return this.getActiveSystems().length;
+        return this.getActiveSystems().size();
     }
 }
