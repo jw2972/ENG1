@@ -51,7 +51,7 @@ public class Infiltrator extends Movement {
 
 
     /**
-     * Returns the vector containing the direction to the closest active system
+     * Returns the vector containing the direction to the closest attackable system
      *
      * @param position        The position to start from
      * @param systemContainer The container with positions of all active systems
@@ -60,7 +60,7 @@ public class Infiltrator extends Movement {
     public static Vector2 getClosestSystemVect(Vector2 position, SystemContainer systemContainer) {
         float minDistance = Float.MAX_VALUE;
         Vector2 direction = new Vector2();
-        for (GameSystem system : systemContainer.getActiveSystems()) {
+        for (GameSystem system : systemContainer.getAttackableSystems()) {
             float currentDistance = position.dst(system.position);
             if (currentDistance < minDistance && system.getCoolDown() <= 0.0) {
                 minDistance = currentDistance;
@@ -71,7 +71,7 @@ public class Infiltrator extends Movement {
     }
 
     /**
-     * Returns the closest active system
+     * Returns the closest system that is active and not on cool down
      *
      * @param position        The position to start from
      * @param systemContainer The container with positions of all active systems
@@ -80,9 +80,9 @@ public class Infiltrator extends Movement {
     public static GameSystem getClosestSystem(Vector2 position, SystemContainer systemContainer) {
         float minDistance = Float.MAX_VALUE;
         GameSystem closestSystem = systemContainer.systems[0];
-        for (GameSystem system : systemContainer.getActiveSystems()) {
+        for (GameSystem system : systemContainer.getAttackableSystems()) {
             float currentDistance = position.dst(system.position);
-            if (currentDistance < minDistance) {
+            if (currentDistance < minDistance && system.getCoolDown() <= 0.0) {
                 minDistance = currentDistance;
                 closestSystem = system;
             }
@@ -128,6 +128,8 @@ public class Infiltrator extends Movement {
             if (targetSystem.health > 0) {
                 targetSystem.damaged(50);
                 System.out.println("Infiltrator: " + this.name + " attacking: " + targetSystem.name + " with health remaining: " + targetSystem.health);
+                //TODO look at moving the infiltrator away from just attacked system to avoid detection and make game harder
+                //targetSystem = null;
             } else {
                 targetSystem = null;
             }

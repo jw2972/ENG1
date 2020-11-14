@@ -19,12 +19,19 @@ public class GameSystem extends Movement {
         this.coolDown = 0.0f;
     }
 
+    /**
+     * Allows infiltrators to damage systems and sets the system on cool down
+     *
+     * @param inflicted the damage to be inflicted to the system
+     * @return health the remaining health of the system
+     */
     public int damaged(int inflicted) {
-        System.out.println("Inflicting: " + inflicted + " to system: " + this.name);
-        this.health = this.health - inflicted;
-        if (this.health < 50) {
-            //TODO create sprite to warn Auber of system damage (play sound?)
+        if (this.coolDown > 0.0) {
+            return this.health;
         }
+        this.health = this.health - inflicted;
+        System.out.println("Inflicting: " + inflicted + " to system: " + this.name + "now at: " + this.health);
+        //TODO create sprite to warn Auber of system damage (play sound?)
         if (this.health <= 0) {
             this.active = false;
             this.health = 0;
