@@ -11,41 +11,87 @@ import java.util.TreeMap;
 
 public class Infiltrator extends Movement {
     /**
+     * The amount of damage applied in "one" attack
+     */
+    public static final int damageDealt = 50;
+    // TODO Convert to an ID
+    public String name;
+    /**
      * The list of movements to take
      */
     Queue<Movements> moves;
+    private GameSystem targetSystem;
+
+    /**
+     * The time since the movements of the infiltrators were last updated
+     */
+    private float timeSinceLastUpdate;
 
     /**
      * Spawns a new infiltrator at a random position
      *
-     * @param room The map of valid tiles
+     * @param roomTiles The map of valid tiles
      */
-    public Infiltrator(TiledMapTileLayer room) {
-        super(new Texture(("Infiltrator.png")), 32, 32, 1, 1);
+    public Infiltrator(TiledMapTileLayer roomTiles, String name) {
+        super(new Texture(("Infiltrator.png")), roomTiles, 1, 1);
+        this.name = name;
+        this.targetSystem = null;
+        this.timeSinceLastUpdate = 0f;
         moves = new LinkedList<>();
-        this.moveRandomCell(room);
-        System.out.println("Spawned infiltrator at: " + this.position.toString());
+        System.out.println("Spawned infiltrator:" + this.name + " at: " + this.position.toString());
+    }
+
+    public float getTimeSinceLastUpdate() {
+        return timeSinceLastUpdate;
+    }
+
+    public void incrementTimeSinceLastUpdate(float incrementTime) {
+        this.timeSinceLastUpdate += incrementTime;
+    }
+
+    public void resetTimeSinceLastUpdate() {
+        this.timeSinceLastUpdate = 0;
     }
 
 
     /**
-     * Returns the vector containing the direction to the closest active system
+     * Returns the vector containing the direction to the closest attackable system
      *
      * @param position        The position to start from
      * @param systemContainer The container with positions of all active systems
      * @return Vector2 The direction of the target system
      */
-    public static Vector2 getClosestSystem(Vector2 position, SystemContainer systemContainer) {
+    public static Vector2 getClosestSystemVect(Vector2 position, SystemContainer systemContainer) {
         float minDistance = Float.MAX_VALUE;
         Vector2 direction = new Vector2();
-        for (GameSystem system : systemContainer.getActiveSystems()) {
+        for (GameSystem system : systemContainer.getAttackableSystems()) {
             float currentDistance = position.dst(system.position);
-            if (currentDistance < minDistance) {
+            if (currentDistance < minDistance && system.getCoolDown() <= 0.0) {
                 minDistance = currentDistance;
                 direction = system.position.cpy().sub(position);
             }
         }
         return direction;
+    }
+
+    /**
+     * Returns the closest system that is active and not on cool down
+     *
+     * @param position        The position to start from
+     * @param systemContainer The container with positions of all active systems
+     * @return GameSystem    The target system
+     */
+    public static GameSystem getClosestSystem(Vector2 position, SystemContainer systemContainer) {
+        float minDistance = Float.MAX_VALUE;
+        GameSystem closestSystem = systemContainer.systems[0];
+        for (GameSystem system : systemContainer.getAttackableSystems()) {
+            float currentDistance = position.dst(system.position);
+            if (currentDistance < minDistance && system.getCoolDown() <= 0.0) {
+                minDistance = currentDistance;
+                closestSystem = system;
+            }
+        }
+        return closestSystem;
     }
 
     /**
@@ -76,19 +122,29 @@ public class Infiltrator extends Movement {
      * @param systems The location of all systems
      */
     public void moveInfiltrator(TiledMapTileLayer room, SystemContainer systems) {
-        if (moves.isEmpty()) {
+        if (moves.isEmpty() && targetSystem == null) {
             Node node = getMove(room, systems);
             moves = node.exportPath();
         }
         this.velocity.x = 0;
         this.velocity.y = 0;
-        if (moves.isEmpty()) {
-            // TODO Start infiltrator damage
-            System.out.println("DO DAMAGE");
-        } else {
+        if (targetSystem != null) {
+            targetSystem.applyDamage(damageDealt);
+            System.out.println("Infiltrator: " + this.name + " attacking: " + targetSystem.name + " with health remaining: " + targetSystem.health);
+            if (targetSystem.health <= 0) {
+                targetSystem = null;
+                //TODO look at moving the infiltrator away from just attacked system to avoid detection and make game harder
+            }
+        } else if (!moves.isEmpty()) {
             Movements move = moves.remove();
             this.velocity.add(getMovement(move)).scl(this.MAX_VELOCITY);
+            // We have reached the target system
+            if (moves.isEmpty()) {
+                targetSystem = getClosestSystem(position, systems);
+                System.out.println("At target system: " + targetSystem.name);
+            }
         }
+
     }
 
     /**
@@ -109,7 +165,7 @@ public class Infiltrator extends Movement {
             currentNode = possibleMoves.remove(possibleMoves.firstKey());
             visited.add(currentNode.getPosition());
             // Checks if we are at a system
-            Vector2 closestSystem = getClosestSystem(currentNode.getPosition(), systems);
+            Vector2 closestSystem = getClosestSystemVect(currentNode.getPosition(), systems);
             if (closestSystem.len() < 1) {
                 return currentNode;
             }
@@ -118,7 +174,7 @@ public class Infiltrator extends Movement {
                 Vector2 position = currentNode.getPosition().cpy().add(getMovement(move));
                 if (!visited.contains(position)) {
                     int cost = currentNode.getCost() + 1;
-                    float heuristic = getClosestSystem(position, systems).len();
+                    float heuristic = getClosestSystemVect(position, systems).len();
                     possibleMoves.put(heuristic + cost, new Node(currentNode, position, move, cost, heuristic));
                 }
             }
@@ -170,8 +226,8 @@ class Node {
     }
 
     /**
-     * Checks the 4 neighbouring cells, to see if they are room tiles
-     * Returning the valid ones
+     * Checks the 4 neighbouring cells (In the given Movements Enum), to see if they are valid room tiles<br>
+     * And returns the valid ones
      *
      * @param room The map containing valid room tiles
      * @return The list of valid movements
