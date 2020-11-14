@@ -12,7 +12,7 @@ public class InfiltratorContainer {
     /**
      * The maximum number of infiltrators to spawn
      */
-    private static final int MAX_INFILTRATORS = 1;
+    private static final int MAX_INFILTRATORS = 10;
     /**
      * The infiltrators that are currently "alive" on the map
      */
@@ -34,14 +34,14 @@ public class InfiltratorContainer {
     }
 
     /**
-     * Checks whether to spawn a new infiltrator
-     * Checks all active infiltrators and whether they need moving then updates their position
+     * Checks whether to spawn a new infiltrator <br>
+     * Checks all active infiltrators and whether they need moving, then updates their position
      * and draws them
      *
-     * @param deltaTime         time passed
-     * @param room              generic room type[?]
-     * @param systemContainer   container for all the ship systems
-     * @param batch             libgdx drawing system
+     * @param deltaTime       The time passed, since this was last called
+     * @param room            The map layer containing all valid room tiles
+     * @param systemContainer The container for all the ship systems
+     * @param batch           Libgdx drawing system
      */
     public void updateAndDraw(float deltaTime, TiledMapTileLayer room, SystemContainer systemContainer, Batch batch) {
         timeSinceLastSpawn += deltaTime;

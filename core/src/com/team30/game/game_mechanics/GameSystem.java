@@ -9,8 +9,8 @@ public class GameSystem extends Movement {
     private float coolDown;
 
 
-    public GameSystem(String name, int x_pos, int y_pos, int width, int height, int health) {
-        super(null, x_pos, y_pos, width, height);
+    public GameSystem(String name, int xPos, int yPos, int width, int height, int health) {
+        super(null, xPos, yPos, width, height);
         this.name = name;
         this.MAX_VELOCITY = 0f;
         this.VELOCITY_CHANGE = 0f;
@@ -20,12 +20,13 @@ public class GameSystem extends Movement {
     }
 
     /**
-     * Allows infiltrators to damage systems and sets the system on cool down
+     * If the system is not on cooldown, applies the given amount of damage<br>     *
+     * And returns the remaining health
      *
-     * @param inflicted the damage to be inflicted to the system
-     * @return health the remaining health of the system
+     * @param inflicted The amount of damage to be inflicted to the system
+     * @return health The remaining health of the system
      */
-    public int damaged(int inflicted) {
+    public int applyDamage(int inflicted) {
         if (this.coolDown > 0.0) {
             return this.health;
         }
@@ -40,17 +41,26 @@ public class GameSystem extends Movement {
         return health;
     }
 
-    public float getCoolDown() {return this.coolDown;}
-
-    public void updateCoolDown(float delta) {this.coolDown -= delta;}
+    public float getCoolDown() {
+        return this.coolDown;
+    }
 
     /**
-     * Don't need to draw as should be in base layer of map
+     * Removes the given amount of time from the cooldown
+     *
+     * @param delta The amount of time that has elapsed
+     */
+    public void updateCoolDown(float delta) {
+        this.coolDown -= delta;
+    }
+
+    /**
+     * Overridden and does nothing because the system images are currently in the base map layer (As of 14/11/2020)
      *
      * @param batch The sprite batch to render to
      */
     @Override
     public void draw(Batch batch) {
-        batch.draw(texture, getXPosition(), getYPosition(), width, height);
+
     }
 }
