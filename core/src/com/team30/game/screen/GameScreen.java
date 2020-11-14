@@ -89,7 +89,7 @@ public class GameScreen extends ScreenAdapter implements InputProcessor {
         camera.update();
 
         // Create and move Auber to centre room
-        auber = new Auber(10, 10);
+        auber = new Auber(32, 32);
         //System.out.println("Made Auber");
         npcs = new NPCContainer(room);
         //System.out.println("Made NPCs");
