@@ -5,6 +5,8 @@ import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.math.Vector2;
 
+import java.util.Random;
+
 /**
  * Handles updating position and collision detection
  */
@@ -12,7 +14,7 @@ public class Movement {
     /**
      * The default max velocity of a entity
      */
-    public final float MAX_VELOCITY = 5f;
+    public float MAX_VELOCITY = 5f;
     /**
      * The amount velocity increases, when input is recorded
      */
@@ -38,14 +40,57 @@ public class Movement {
      */
     public Texture texture;
 
-    public Movement(Texture texture, float x_pos, float y_pos, int width, int height) {
+    /**
+     * Creates a new entity at a random position
+     *
+     * @param texture   The texture of the given entity
+     * @param roomTiles The map layer of valid room cells
+     * @param width     The width of the entity
+     * @param height    The height of the entity
+     */
+    public Movement(Texture texture, TiledMapTileLayer roomTiles, int width, int height) {
         this.texture = texture;
         this.width = width;
         this.height = height;
 
-        this.position = new Vector2(x_pos, y_pos);
+        this.position = new Vector2(0, 0);
         this.velocity = new Vector2(0, 0);
+        this.moveRandomCell(roomTiles);
+    }
 
+    /**
+     * Creates a new entity at the given position
+     *
+     * @param texture The texture of the given entity
+     * @param xPos    The x coordinate of the entity
+     * @param yPos    The y coordinate of the entity
+     * @param width   The width of the entity
+     * @param height  The height of the entity
+     */
+    public Movement(Texture texture, int xPos, int yPos, int width, int height) {
+        this.texture = texture;
+        this.width = width;
+        this.height = height;
+
+        this.position = new Vector2(xPos, yPos);
+        this.velocity = new Vector2(0, 0);
+    }
+
+    /**
+     * Moves the current entity to a random valid room cell
+     *
+     * @param roomTiles The map of valid roomTiles cells
+     */
+    public void moveRandomCell(TiledMapTileLayer roomTiles) {
+        Random rand = new Random();
+        int x = rand.nextInt(roomTiles.getWidth());
+        int y = rand.nextInt(roomTiles.getHeight());
+        while (roomTiles.getCell(x, y) == null) {
+            x = rand.nextInt(roomTiles.getWidth());
+            y = rand.nextInt(roomTiles.getHeight());
+        }
+        this.position.x = x;
+        this.position.y = y;
     }
 
     public void draw(Batch batch) {
@@ -58,7 +103,7 @@ public class Movement {
      * @param deltaTime The time since last update
      * @param room      The room layer for collision detection
      */
-    public void updateAuber(float deltaTime, TiledMapTileLayer room) {
+    public void updatePosition(float deltaTime, TiledMapTileLayer room) {
         if (deltaTime == 0) return;
 
         if (deltaTime > 0.1f) {

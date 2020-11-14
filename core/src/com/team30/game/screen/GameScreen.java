@@ -7,6 +7,7 @@ import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.Batch;
+import com.badlogic.gdx.maps.MapLayer;
 import com.badlogic.gdx.maps.MapLayers;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
@@ -16,8 +17,7 @@ import com.team30.game.GameContainer;
 import com.team30.game.Recording.Action;
 import com.team30.game.Recording.ActionType;
 import com.team30.game.Recording.RecordingContainer;
-import com.team30.game.game_mechanics.Auber;
-import com.team30.game.game_mechanics.ID;
+import com.team30.game.game_mechanics.*;
 
 import java.util.LinkedList;
 
@@ -25,7 +25,11 @@ public class GameScreen extends ScreenAdapter implements InputProcessor {
     /**
      * The size of the tiles in pixels
      */
-    private static final int TILE_SIZE = 64;
+    public static final int TILE_SIZE = 64;
+    /**
+     * The amount of tiles rendered around the Auber
+     */
+    private static final int VIEW_DISTANCE = 10;
     private static final float SNAPSHOT_INTERVAL = 0.1f;
     private final Auber auber;
 
@@ -33,7 +37,11 @@ public class GameScreen extends ScreenAdapter implements InputProcessor {
      * A map layer, representing valid tiles for characters to enter (Room Tiles)
      * Used for collision detection
      */
-    private final TiledMapTileLayer room;
+    private final TiledMapTileLayer roomTiles;
+    private final MapLayer systemsMap;
+
+    private final InfiltratorContainer infiltrators;
+    private final SystemContainer systemContainer;
     /**
      * Used for selecting the view window for the player
      */
@@ -41,11 +49,46 @@ public class GameScreen extends ScreenAdapter implements InputProcessor {
     OrthogonalTiledMapRenderer tiledMapRenderer;
     TiledMap tiledMap;
     GameContainer game;
+    NPCContainer npcs;
 
     float timeSinceLastSnapshot;
     RecordingContainer recording;
     Boolean shouldRecord;
     Boolean isPlayback;
+
+    /**
+     * Builds the map, camera and entities for a game
+     */
+    private GameScreen() {
+        float width = GameContainer.SCREEN_WIDTH;
+        float height = GameContainer.SCREEN_HEIGHT;
+
+        // Map setup
+        tiledMap = new TmxMapLoader().load("Map.tmx");
+        MapLayers layers = tiledMap.getLayers();
+        roomTiles = (TiledMapTileLayer) layers.get("Rooms");
+        systemsMap = layers.get("Systems");
+
+        // Builds the renderer and sets the grid to one "tile"
+        tiledMapRenderer = new OrthogonalTiledMapRenderer(tiledMap, (float) 1 / TILE_SIZE);
+
+        camera = new OrthographicCamera();
+        // Sets the view distance, adjusting for aspect ratio
+        camera.setToOrtho(false, (width / height) * VIEW_DISTANCE, VIEW_DISTANCE);
+        camera.update();
+
+        // Create and move Auber to centre room
+        // TODO Think of a better way of assining
+        auber = new Auber(roomTiles);
+        //System.out.println("Made Auber");
+        npcs = new NPCContainer(roomTiles);
+        //System.out.println("Made NPCs");
+        infiltrators = new InfiltratorContainer();
+        //System.out.println("Made Infiltrators");
+        systemContainer = new SystemContainer(systemsMap);
+        //System.out.println("Made Systems");
+        Gdx.input.setInputProcessor(this);
+    }
 
     /**
      * Starts a new game with player controlled Auber
@@ -54,32 +97,14 @@ public class GameScreen extends ScreenAdapter implements InputProcessor {
      * @param shouldRecord Whether this game should be recorded
      */
     GameScreen(GameContainer game, Boolean shouldRecord) {
+        this();
         this.game = game;
+        // Recording setup
         this.timeSinceLastSnapshot = 0;
         this.shouldRecord = shouldRecord;
         this.isPlayback = false;
-        recording = new RecordingContainer();
-
-        float width = GameContainer.SCREEN_WIDTH;
-        float height = GameContainer.SCREEN_HEIGHT;
-
-        tiledMap = new TmxMapLoader().load("Map.tmx");
-
-        MapLayers layers = tiledMap.getLayers();
-        room = (TiledMapTileLayer) layers.get("Rooms");
-        // Builds the renderer and sets the grid to one "tile"
-        tiledMapRenderer = new OrthogonalTiledMapRenderer(tiledMap, (float) 1 / TILE_SIZE);
-
-        camera = new OrthographicCamera();
-        // Give a view of 10 tiles, adjusting for aspect ratio
-        camera.setToOrtho(false, (width / height) * 10, 10);
-        camera.update();
-
-        // Create and move Auber to centre room
-        auber = new Auber(31, 32);
-        Gdx.input.setInputProcessor(this);
+        this.recording = new RecordingContainer();
     }
-
     /**
      * Creates a new playback instance from the given recording
      *
@@ -87,30 +112,14 @@ public class GameScreen extends ScreenAdapter implements InputProcessor {
      * @param recording The recording to playback from
      */
     GameScreen(GameContainer game, RecordingContainer recording) {
+        this();
         this.game = game;
+
+        // Recording setup
         this.timeSinceLastSnapshot = 0;
         this.shouldRecord = false;
         this.isPlayback = true;
-        this.recording = recording;
-
-        float width = GameContainer.SCREEN_WIDTH;
-        float height = GameContainer.SCREEN_HEIGHT;
-
-        tiledMap = new TmxMapLoader().load("Map.tmx");
-
-        MapLayers layers = tiledMap.getLayers();
-        room = (TiledMapTileLayer) layers.get("Rooms");
-        // Builds the renderer and sets the grid to one "tile"
-        tiledMapRenderer = new OrthogonalTiledMapRenderer(tiledMap, (float) 1 / TILE_SIZE);
-
-        camera = new OrthographicCamera();
-        // Give a view of 10 tiles, adjusting for aspect ratio
-        camera.setToOrtho(false, (width / height) * 10, 10);
-        camera.update();
-
-        // Create and move Auber to centre room
-        auber = new Auber(31, 32);
-        Gdx.input.setInputProcessor(this);
+        this.recording=recording;
     }
 
     @Override
@@ -149,8 +158,8 @@ public class GameScreen extends ScreenAdapter implements InputProcessor {
                 }
             }
         }
-        auber.updateAuber(delta, room);
 
+        auber.updatePosition(delta, roomTiles);
         // Set the camera to focus on Auber
         camera.position.x = auber.getXPosition();
         camera.position.y = auber.getYPosition();
@@ -162,6 +171,13 @@ public class GameScreen extends ScreenAdapter implements InputProcessor {
         Batch batch = tiledMapRenderer.getBatch();
         batch.begin();
         auber.draw(batch);
+        npcs.updateAndDraw(delta, roomTiles, batch);
+        infiltrators.updateAndDraw(delta, roomTiles, systemContainer, batch);
+        if (systemContainer.updateAndGetActive(delta) <= 1) {
+            System.out.println("Game ends");
+            game.pause();
+            //TODO game end condition
+        }
         batch.end();
 
         // Records any movements made
@@ -171,15 +187,14 @@ public class GameScreen extends ScreenAdapter implements InputProcessor {
             recording.addAction(new Action(new ID(), ActionType.AuberMove, auber.getXPosition(), auber.getYPosition(), auber.getXVelocity(), auber.getYVelocity(), null));
             timeSinceLastSnapshot = 0;
         }
-
     }
 
 
     /**
      * Key not being pressed, so set velocity to zero
      *
-     * @param keycode
-     * @return
+     * @param keycode the keycode of the pressed key
+     * @return false
      */
     @Override
     public boolean keyUp(int keycode) {
@@ -213,8 +228,8 @@ public class GameScreen extends ScreenAdapter implements InputProcessor {
     /**
      * Key not being pressed, so set velocity to max
      *
-     * @param keycode
-     * @return
+     * @param keycode the keycode of the pressed key
+     * @return false a generic return
      */
     @Override
     public boolean keyDown(int keycode) {
