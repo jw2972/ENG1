@@ -11,10 +11,15 @@ import java.util.TreeMap;
 
 public class Infiltrator extends Movement {
     /**
+     * The amount of damage applied in "one" attack
+     */
+    public static final int damageDealt = 50;
+    // TODO Convert to an ID
+    public String name;
+    /**
      * The list of movements to take
      */
     Queue<Movements> moves;
-    public String name;
     private GameSystem targetSystem;
 
     /**
@@ -25,15 +30,14 @@ public class Infiltrator extends Movement {
     /**
      * Spawns a new infiltrator at a random position
      *
-     * @param room The map of valid tiles
+     * @param roomTiles The map of valid tiles
      */
-    public Infiltrator(TiledMapTileLayer room, String name) {
-        super(new Texture(("Infiltrator.png")), 32, 32, 1, 1);
+    public Infiltrator(TiledMapTileLayer roomTiles, String name) {
+        super(new Texture(("Infiltrator.png")), roomTiles, 1, 1);
         this.name = name;
         this.targetSystem = null;
         this.timeSinceLastUpdate = 0f;
         moves = new LinkedList<>();
-        this.moveRandomCell(room);
         System.out.println("Spawned infiltrator:" + this.name + " at: " + this.position.toString());
     }
 
@@ -125,13 +129,11 @@ public class Infiltrator extends Movement {
         this.velocity.x = 0;
         this.velocity.y = 0;
         if (targetSystem != null) {
-            if (targetSystem.health > 0) {
-                targetSystem.damaged(50);
-                System.out.println("Infiltrator: " + this.name + " attacking: " + targetSystem.name + " with health remaining: " + targetSystem.health);
-                //TODO look at moving the infiltrator away from just attacked system to avoid detection and make game harder
-                //targetSystem = null;
-            } else {
+            targetSystem.applyDamage(damageDealt);
+            System.out.println("Infiltrator: " + this.name + " attacking: " + targetSystem.name + " with health remaining: " + targetSystem.health);
+            if (targetSystem.health <= 0) {
                 targetSystem = null;
+                //TODO look at moving the infiltrator away from just attacked system to avoid detection and make game harder
             }
         } else if (!moves.isEmpty()) {
             Movements move = moves.remove();
@@ -224,8 +226,8 @@ class Node {
     }
 
     /**
-     * Checks the 4 neighbouring cells, to see if they are room tiles
-     * Returning the valid ones
+     * Checks the 4 neighbouring cells (In the given Movements Enum), to see if they are valid room tiles<br>
+     * And returns the valid ones
      *
      * @param room The map containing valid room tiles
      * @return The list of valid movements

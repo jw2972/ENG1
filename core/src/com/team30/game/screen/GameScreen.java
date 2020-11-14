@@ -13,16 +13,11 @@ import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
-import com.badlogic.gdx.ApplicationAdapter;
 import com.team30.game.GameContainer;
 import com.team30.game.Recording.Action;
 import com.team30.game.Recording.ActionType;
 import com.team30.game.Recording.RecordingContainer;
-import com.team30.game.game_mechanics.Auber;
-import com.team30.game.game_mechanics.InfiltratorContainer;
-import com.team30.game.game_mechanics.NPCContainer;
-import com.team30.game.game_mechanics.SystemContainer;
-import com.team30.game.game_mechanics.ID;
+import com.team30.game.game_mechanics.*;
 
 import java.util.LinkedList;
 
@@ -31,6 +26,10 @@ public class GameScreen extends ScreenAdapter implements InputProcessor {
      * The size of the tiles in pixels
      */
     public static final int TILE_SIZE = 64;
+    /**
+     * The amount of tiles rendered around the Auber
+     */
+    private static final int VIEW_DISTANCE = 10;
     private static final float SNAPSHOT_INTERVAL = 0.1f;
     private final Auber auber;
 
@@ -38,7 +37,7 @@ public class GameScreen extends ScreenAdapter implements InputProcessor {
      * A map layer, representing valid tiles for characters to enter (Room Tiles)
      * Used for collision detection
      */
-    private final TiledMapTileLayer room;
+    private final TiledMapTileLayer roomTiles;
     private final MapLayer systemsMap;
 
     private final InfiltratorContainer infiltrators;
@@ -58,46 +57,53 @@ public class GameScreen extends ScreenAdapter implements InputProcessor {
     Boolean isPlayback;
 
     /**
-     * Starts a new game with player controlled Auber
-     *
-     * @param game         The parent container
-     * @param shouldRecord Whether this game should be recorded
+     * Builds the map, camera and entities for a game
      */
-    GameScreen(GameContainer game, Boolean shouldRecord) {
-        this.game = game;
+    private GameScreen() {
         float width = GameContainer.SCREEN_WIDTH;
         float height = GameContainer.SCREEN_HEIGHT;
-
-        // Recording setup
-        this.timeSinceLastSnapshot = 0;
-        this.shouldRecord = shouldRecord;
-        this.isPlayback = false;
-        this.recording = new RecordingContainer();
 
         // Map setup
         tiledMap = new TmxMapLoader().load("Map.tmx");
         MapLayers layers = tiledMap.getLayers();
-        room = (TiledMapTileLayer) layers.get("Rooms");
+        roomTiles = (TiledMapTileLayer) layers.get("Rooms");
         systemsMap = layers.get("Systems");
 
         // Builds the renderer and sets the grid to one "tile"
         tiledMapRenderer = new OrthogonalTiledMapRenderer(tiledMap, (float) 1 / TILE_SIZE);
 
         camera = new OrthographicCamera();
-        // Give a view of 10 tiles, adjusting for aspect ratio
-        camera.setToOrtho(false, (width / height) * 10, 10);
+        // Sets the view distance, adjusting for aspect ratio
+        camera.setToOrtho(false, (width / height) * VIEW_DISTANCE, VIEW_DISTANCE);
         camera.update();
 
         // Create and move Auber to centre room
-        auber = new Auber(10, 10);
+        // TODO Think of a better way of assining
+        auber = new Auber(roomTiles);
         //System.out.println("Made Auber");
-        npcs = new NPCContainer(room);
+        npcs = new NPCContainer(roomTiles);
         //System.out.println("Made NPCs");
         infiltrators = new InfiltratorContainer();
         //System.out.println("Made Infiltrators");
         systemContainer = new SystemContainer(systemsMap);
         //System.out.println("Made Systems");
         Gdx.input.setInputProcessor(this);
+    }
+
+    /**
+     * Starts a new game with player controlled Auber
+     *
+     * @param game         The parent container
+     * @param shouldRecord Whether this game should be recorded
+     */
+    GameScreen(GameContainer game, Boolean shouldRecord) {
+        this();
+        this.game = game;
+        // Recording setup
+        this.timeSinceLastSnapshot = 0;
+        this.shouldRecord = shouldRecord;
+        this.isPlayback = false;
+        this.recording = new RecordingContainer();
     }
     /**
      * Creates a new playback instance from the given recording
@@ -106,40 +112,14 @@ public class GameScreen extends ScreenAdapter implements InputProcessor {
      * @param recording The recording to playback from
      */
     GameScreen(GameContainer game, RecordingContainer recording) {
+        this();
         this.game = game;
-        float width = GameContainer.SCREEN_WIDTH;
-        float height = GameContainer.SCREEN_HEIGHT;
 
         // Recording setup
         this.timeSinceLastSnapshot = 0;
         this.shouldRecord = false;
         this.isPlayback = true;
         this.recording=recording;
-
-        // Map setup
-        tiledMap = new TmxMapLoader().load("Map.tmx");
-        MapLayers layers = tiledMap.getLayers();
-        room = (TiledMapTileLayer) layers.get("Rooms");
-        systemsMap = layers.get("Systems");
-
-        // Builds the renderer and sets the grid to one "tile"
-        tiledMapRenderer = new OrthogonalTiledMapRenderer(tiledMap, (float) 1 / TILE_SIZE);
-
-        camera = new OrthographicCamera();
-        // Give a view of 10 tiles, adjusting for aspect ratio
-        camera.setToOrtho(false, (width / height) * 10, 10);
-        camera.update();
-
-        // Create and move Auber to centre room
-        auber = new Auber(10, 10);
-        //System.out.println("Made Auber");
-        npcs = new NPCContainer(room);
-        //System.out.println("Made NPCs");
-        infiltrators = new InfiltratorContainer();
-        //System.out.println("Made Infiltrators");
-        systemContainer = new SystemContainer(systemsMap);
-        //System.out.println("Made Systems");
-        Gdx.input.setInputProcessor(this);
     }
 
     @Override
@@ -179,7 +159,7 @@ public class GameScreen extends ScreenAdapter implements InputProcessor {
             }
         }
 
-        auber.updatePosition(delta, room);
+        auber.updatePosition(delta, roomTiles);
         // Set the camera to focus on Auber
         camera.position.x = auber.getXPosition();
         camera.position.y = auber.getYPosition();
@@ -191,8 +171,8 @@ public class GameScreen extends ScreenAdapter implements InputProcessor {
         Batch batch = tiledMapRenderer.getBatch();
         batch.begin();
         auber.draw(batch);
-        npcs.updateAndDraw(delta, room, batch);
-        infiltrators.updateAndDraw(delta, room, systemContainer, batch);
+        npcs.updateAndDraw(delta, roomTiles, batch);
+        infiltrators.updateAndDraw(delta, roomTiles, systemContainer, batch);
         if (systemContainer.updateAndGetActive(delta) <= 1) {
             System.out.println("Game ends");
             game.pause();
