@@ -2,6 +2,7 @@ package com.team30.game.game_mechanics;
 
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
@@ -99,8 +100,14 @@ public class Movement {
         this.position.y = y;
     }
 
-    public void draw(Batch batch) {
+    public void draw(SpriteBatch batch) {
         batch.draw(region, getXPosition(), getYPosition(), width / 2f, height / 2f, width, height, 1f, 1f, velocity.angle() + 90);
+    }
+    
+    public void drawInvisible(SpriteBatch batch) {
+    	Invisible invisible=new Invisible();
+        batch.draw(region, getXPosition(), getYPosition(), width / 2f, height / 2f, width, height, 1f, 1f, velocity.angle() + 90);
+        invisible.draw(batch);
     }
 
     /**
