@@ -79,7 +79,7 @@ public class Infiltrator extends Movement {
      * @param delay delay the time to change diagram.( It can be used as cooling down time.)
      */
     public Infiltrator(TiledMapTileLayer roomTiles, String name, float delay) {
-        super(new Texture(("data/infiltrator_change.png")), roomTiles, 1, 1);
+        super(new Texture(("data/Infiltrator_change.png")), roomTiles, 1, 1);
         Invisible invisible = new Invisible();
         invisible.show(delay);
         this.name = name;
