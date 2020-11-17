@@ -20,7 +20,7 @@ public class Invisible {
      * @param delay the time to change diagram.( It can be used as cooling down time.)
      */
 	public void show(float delay) {
-		texture = new Texture(Gdx.files.internal("data/auber_change.png"));
+		texture = new Texture(Gdx.files.internal("data/infiltrator_change.png"));
 		
 		TextureRegion region = new TextureRegion( texture );
 		TextureRegion[] regions = region.split( 64, 64 )[0];

@@ -53,6 +53,42 @@ public class Infiltrator extends Movement {
         moves = new LinkedList<>();
         System.out.println("Spawned infiltrator:" + this.name + " at: " + this.position.toString());
     }
+    
+    /**
+     * infiltrator hallucination ability creation
+     *
+     * @param coolDown the time for coolDown special ability
+     * @param hallucinationTime the time for Auber hallucination
+     */
+    public Infiltrator(TiledMapTileLayer roomTiles, String name, float coolDown, float hallucinationTime) {
+        super(new Texture(("Infiltrator.png")), roomTiles, 1, 1);
+        this.name = name;
+        this.targetSystem = null;
+        this.timeSinceLastUpdate = 0f;
+        this.coolDown = coolDown;
+        this.hallucinationTime = hallucinationTime;
+        
+        
+        moves = new LinkedList<>();
+        System.out.println("Spawned infiltrator:" + this.name + " at: " + this.position.toString());
+    }
+    
+    /**
+     * infiltrator invisible ability creation
+     *
+     * @param delay delay the time to change diagram.( It can be used as cooling down time.)
+     */
+    public Infiltrator(TiledMapTileLayer roomTiles, String name, float delay) {
+        super(new Texture(("data/infiltrator_change.png")), roomTiles, 1, 1);
+        Invisible invisible = new Invisible();
+        invisible.show(delay);
+        this.name = name;
+        this.targetSystem = null;
+        this.timeSinceLastUpdate = 0f;
+       
+        moves = new LinkedList<>();
+        System.out.println("Spawned infiltrator:" + this.name + " at: " + this.position.toString());
+    }
 
     public float getTimeSinceLastUpdate() {
         return timeSinceLastUpdate;
@@ -87,43 +123,6 @@ public class Infiltrator extends Movement {
         return direction;
     }
     
-
-	  /**
-   * infiltrator hallucination ability creation
-   *
-   * @param coolDown the time for coolDown special ability
-   * @param hallucinationTime the time for Auber hallucination
-   */
-  public Infiltrator(TiledMapTileLayer roomTiles, String name, float coolDown, float hallucinationTime) {
-      super(new Texture(("Infiltrator.png")), roomTiles, 1, 1);
-      this.name = name;
-      this.targetSystem = null;
-      this.timeSinceLastUpdate = 0f;
-      this.coolDown = coolDown;
-      this.hallucinationTime = hallucinationTime;
-      
-      
-      moves = new LinkedList<>();
-      System.out.println("Spawned infiltrator:" + this.name + " at: " + this.position.toString());
-  }
-  
-  /**
-   * infiltrator invisible ability creation
-   *
-   * @param delay delay the time to change diagram.( It can be used as cooling down time.)
-   */
-  public Infiltrator(TiledMapTileLayer roomTiles, String name, float delay) {
-      super(new Texture(("data/auber_change.png")), roomTiles, 1, 1);
-      Invisible invisible = new Invisible();
-      invisible.show(delay);
-      this.name = name;
-      this.targetSystem = null;
-      this.timeSinceLastUpdate = 0f;
-     
-      moves = new LinkedList<>();
-      System.out.println("Spawned infiltrator:" + this.name + " at: " + this.position.toString());
-  }
-  
 
     /**
      * Returns the closest system that is active and not on cool down
