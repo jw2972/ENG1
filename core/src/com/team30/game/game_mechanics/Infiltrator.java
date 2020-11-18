@@ -1,4 +1,4 @@
-package com.me.move.game_mechanics;
+package com.team30.game.game_mechanics;
 
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;

@@ -54,15 +54,15 @@ public class SpecialAbilities {
 				infil.coolDown=coolDown;
 				
 				if(this.hallucinationTime == 0 ) { 
-					auber.VELOCITY_CHANGE = 2f;
-					if(this.coolDown == 0) {
-						continue;
+					auber.VELOCITY_CHANGE = 2f;}
+				if(this.coolDown == 0) {
+					continue;
 				}
 				
 			}
 		}
 		}
-		}
+
 	
 	/**
 
