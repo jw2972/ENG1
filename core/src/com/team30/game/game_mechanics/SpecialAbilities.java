@@ -12,70 +12,50 @@ import com.team30.game.game_mechanics.Infiltrator;
 
 public class SpecialAbilities {
 	/**
-	 * the value for loop
+	 * Render time for the animation
 	 */
-	int i=0;
-	
-	 /**
-     * The time for coolDown special ability
+	public static float statetime;
+	/**
+	 * 	Manage animation settings for play mode and play order
+	 */
+	Animation animation;
+	/**
+     * The texture of the given invisible picture
      */
-	public float coolDown;
-	
-	 /**
-     * the time for Auber hallucination
+	Texture texture;
+	/**
+     * The texture used to render the invisible picture
      */
-	public float hallucinationTime;
-	
-	TiledMapTileLayer roomTiles;
-	
-	String name;
-	
-	Auber auber= new Auber(roomTiles);
-	Infiltrator infil=new Infiltrator(roomTiles,name, coolDown, hallucinationTime);
+	TextureRegion frame;
+	/**
+     * The texture list used to get picture with current frame
+     */
+	TextureRegion[]currentFrame;
 	
 	/**
-
-     *if infiltrator in the brig or be captured by Auber can't use ability,
-     *if Auber is nearby and cooldown is over,infiltrator will use the ability
-     *@param coolDown the time for coolDown special ability
-     *@param hallucinationTime the time for Auber hallucination
+	 * invisible ability
+     * @param delay The time to change diagram.( It can be used as cooling down time.)
      */
-	
-	public void showHallucinations() {
-		while(i==1) {
-
-		//TODO Determine when infiltrator at brig position or being captured can not use this special ability.
-			
-			if (infil.position.x-auber.position.x < 2 | infil.position.y-auber.position.y< 2 ) {
-				auber.setXVelocity(0);
-				auber.setYVelocity(0);
-				auber.VELOCITY_CHANGE=0;
-				infil.hallucinationTime=hallucinationTime;
-				infil.coolDown=coolDown;
-				
-				if(this.hallucinationTime == 0 ) { 
-					auber.VELOCITY_CHANGE = 2f;}
-				if(this.coolDown == 0) {
-					continue;
-				}
-				
-			}
-		}
-		}
-
-	
-	/**
-
-     *@param VELOCITY_CHANGE higher velocity change for special infiltrator
-     *@param MAX_VELOCITY higher Max velocity for special infiltrator
-     */
-	public void fasterSpeed(float VELOCITY_CHANGE, float MAX_VELOCITY) {
+	public void invisible(float delay) {
+		texture = new Texture(Gdx.files.internal("data/Infiltrator_change.png"));
 		
-		infil.VELOCITY_CHANGE=VELOCITY_CHANGE;
-		infil.MAX_VELOCITY=MAX_VELOCITY;
-	}
+		frame = new TextureRegion( texture );
+		currentFrame = frame.split( 64, 64 )[0];
+		animation = new Animation(delay, currentFrame[0], currentFrame[1]);
+		statetime = 0;
+		}
 	
-	
+	/**
+	 * invisible infiltrator draw
+     */
+	public void draw(SpriteBatch batch){
+    	statetime += Gdx.graphics.getDeltaTime();
+		frame=animation.getKeyFrame(statetime,true);
+		batch.begin();
+		batch.draw(frame, 100, 100);
+		batch.end();
+    }
+
 	/**
 	* @param inflicted The amount of damage to be inflicted to the system
 	*/
@@ -83,21 +63,6 @@ public class SpecialAbilities {
 		//When creating an applydamage(int inflicted) method in GameSystem,fill in a higher value in applydamage.
 	}
 	
-
-	
-	
-	 /**
-	 * @param time The time that has passed
-     */
-    public void updateHallucinationTime(float delta) {
-        this.hallucinationTime -= delta;
-    }
-    /**
-     * @param time The time that has passed
-     */
-    public void updateCoolDown(float delta) {
-        this.coolDown -= delta;
-    }
      }
      
 	
